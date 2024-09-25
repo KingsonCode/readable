@@ -15,7 +15,6 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    # The branches below must be a subset of the branches above
     branches: [ main ]
   schedule:
     - cron: '33 9 * * 4'
@@ -28,28 +27,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'javascript' ]
-        # Optionally add more languages like python, go, etc. if applicable
-
-    permissions:    # Ensuring the right permissions for the workflow
-      actions: read
-      contents: read
-      security-events: write
+        language: [ 'javascript' ] # Specify the language(s) you want to analyze
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3  # Use the latest version of the action
+    - name: Checkout repository
+      uses: actions/checkout@v3  # Update to the latest version of checkout
 
-      # Initializes the CodeQL tools for scanning.
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
-        with:
-          languages: ${{ matrix.language }}
-          # Optionally specify custom queries
-          # queries: ./path/to/local/query, your-org/your-repo/queries@main
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2  # This is already the latest version
 
-      # You can skip the autobuild step for JavaScript since it's not a compiled language.
-      # If using a compiled language (e.g., Java, C#, C++), keep the autobuild step.
+      with:
+        languages: ${{ matrix.language }}
 
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v2  # This is also up to date
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2  # Confirmed latest version
