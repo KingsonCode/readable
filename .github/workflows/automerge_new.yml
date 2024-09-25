@@ -4,25 +4,41 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "10 * * * *"
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
 
-      - uses: actions/setup-go@v2
+    steps:
+      # Step 1: Checkout code (use the latest v3 version)
+      - uses: actions/checkout@v3
+
+      # Step 2: Set up Go (use the latest v4 version)
+      - uses: actions/setup-go@v4
         with:
           go-version: '^1.17.3'
 
-      # Required for automerge to clone from the local working copy
+      # Step 3: Create a new working branch
       - run: git checkout -b work
 
+      # Step 4: Build the automerge tool
       - run: cd automerge && go build -o ~/automerge github.com/solana-labs/token-list/automerge
 
+      # Step 5: Run automerge with environment variable for GITHUB_APP_PEM
       - run: ~/automerge -v=1 -setRemoteForCI
         env:
           GITHUB_APP_PEM: "${{ secrets.TL_APP_PEM }}"
 
+      # Step 6: Configure Git user details for commits
       - run: git config user.name "token-list-automerger[bot]" && git config user.email "94544671+token-list-automerger[bot]@users.noreply.github.com"
-      - run: git fetch --unshallow origin main:main && git checkout main && git merge --no-ff automerge-pending
-      - run: git -c "http.https://github.com/.extraheader=" push app main:main
+
+      # Step 7: Fetch the latest changes from the main branch
+      - run: git fetch origin main --depth=1 && git checkout main
+
+      # Step 8: Merge the automerge-pending branch into main
+      - run: git merge --no-ff automerge-pending
+
+      # Step 9: Push the changes back to the main branch using GITHUB_TOKEN
+      - run: git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
