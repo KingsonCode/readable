@@ -4,10 +4,14 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -19,5 +23,4 @@ jobs:
 
       - name: Build
         run: |
-          cd path/to/your/go/directory  # Adjust this path to your Go project directory
           go build ./...
