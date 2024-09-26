@@ -1,3 +1,5 @@
+package main
+
 name: Go Build and Test
 
 on:
