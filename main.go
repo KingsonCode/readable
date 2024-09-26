@@ -1,7 +1,37 @@
-package main
+name: Go Build and Test
 
-import "fmt"
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
-func main() {
-    fmt.Println("Hello, World!")
-}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+
+      - name: Install dependencies
+        run: |
+          cd my-go-project/
+          go mod download
+
+      - name: Build the project
+        run: |
+          cd my-go-project/
+          go build ./...
+
+      - name: Run tests
+        run: |
+          cd my-go-project/
+          go test ./...
