@@ -15,11 +15,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.21'  # Update to the new version you need
-
-      - name: Check Go version
-        run: go version
+          go-version: '1.21'  # or the version you need
 
       - name: Build
-        run: go build ./...  # Builds the project
-
+        run: go build ./...
