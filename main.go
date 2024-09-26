@@ -19,19 +19,13 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.23'
+          go-version: '1.23'  # Ensure this matches the version in your go.mod
 
       - name: Install dependencies
-        run: |
-          cd my-go-project/
-          go mod download
+        run: go mod tidy  # Downloads dependencies and cleans up go.mod/go.sum files
 
       - name: Build the project
-        run: |
-          cd my-go-project/
-          go build ./...
+        run: go build ./...  # Builds the Go project
 
       - name: Run tests
-        run: |
-          cd my-go-project/
-          go test ./...
+        run: go test ./...  # Runs tests in all Go files
