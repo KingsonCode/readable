@@ -13,34 +13,46 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
   schedule:
-    - cron: '33 9 * * 4'
+    - cron: '0 0 * * 1'
 
 jobs:
   analyze:
-    name: Analyze
+    name: Analyze code with CodeQL
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read             # Allows access to the repository contents
+      security-events: write     # Allows writing security analysis results
 
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'javascript' ] # Specify the language(s) you want to analyze
+        language: [ 'javascript', 'typescript' ]  # Specify the languages to analyze
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3  # Update to the latest version of checkout
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2  # This is already the latest version
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
 
-      with:
-        languages: ${{ matrix.language }}
+      - name: Autobuild
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          elif [ -f yarn.lock ]; then
+            yarn install
+          else
+            npm install
+          fi
 
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v2  # This is also up to date
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2  # Confirmed latest version
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
