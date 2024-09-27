@@ -1,6 +1,4 @@
-package main
-
-name: Go Build and Test
+name: Go Build and Test - Token List
 
 on:
   push:
@@ -21,13 +19,13 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.23'  # Ensure this matches the version in your go.mod
+          go-version: '1.20'
 
       - name: Install dependencies
-        run: go mod tidy  # Downloads dependencies and cleans up go.mod/go.sum files
+        run: go mod download
 
       - name: Build the project
-        run: go build ./...  # Builds the Go project
+        run: go build ./...
 
       - name: Run tests
-        run: go test ./...  # Runs tests in all Go files
+        run: go test ./...
