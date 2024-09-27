@@ -1,31 +1,20 @@
-name: Go Build and Test - Token List
+package main
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+import (
+    "fmt"
+    "os"
+)
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+func main() {
+    // Get the GITHUB_TOKEN from environment variables
+    token := os.Getenv("GITHUB_TOKEN")
+    if token == "" {
+        fmt.Println("No GITHUB_TOKEN found!")
+        return
+    }
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    // Use the token for GitHub API calls, etc.
+    fmt.Println("Using token:", token)
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.20'
-
-      - name: Install dependencies
-        run: go mod download
-
-      - name: Build the project
-        run: go build ./...
-
-      - name: Run tests
-        run: go test ./...
+    // Your application logic...
+}
