@@ -1,4 +1,4 @@
-name: CI
+name: CI Workflow
 
 on:
   push:
@@ -8,14 +8,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.21'  # or the version you need
-
       - name: Build
-        run: go build ./...
+        run: make build  # Your build command
+
+      - name: Send Notification
+        if: ${{ success() }}
+        env:
+          WEBHOOK_URL: ${{ vars.WEBHOOK_URL }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"The CI build for the main branch was successful!"}' \
+          $WEBHOOK_URL
