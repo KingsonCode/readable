@@ -1,0 +1,26 @@
+name: Notify on Merge
+
+# Trigger the workflow on specific events
+on:
+  pull_request:
+    types:
+      - closed  # Run only when the PR is closed (merged or rejected)
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the repository to have access to it
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Send a notification using the webhook URL
+      - name: Send Notification
+        if: ${{ github.event.pull_request.merged == true }}  # Only send if the PR was merged
+        env:
+          WEBHOOK_URL: ${{ vars.WEBHOOK_URL }}  # Reference the webhook URL set in your repository variables
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"A pull request has been merged in the repository!"}' \
+          $WEBHOOK_URL
