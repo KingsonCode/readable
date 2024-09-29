@@ -14,13 +14,18 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build
-        run: make build  # Your build command
+        run: make build  # Replace with your actual build command
 
       - name: Send Notification
-        if: ${{ success() }}
+        if: ${{ success() }}  # Only run if the build is successful
         env:
-          WEBHOOK_URL: ${{ vars.WEBHOOK_URL }}
+          WEBHOOK_URL: ${{ vars.WEBHOOK_URL }}  # Make sure WEBHOOK_URL is defined in repository variables
         run: |
+          if [ -z "$WEBHOOK_URL" ]; then
+            echo "Error: WEBHOOK_URL is not set or empty!"
+            exit 1
+          fi
+
           curl -X POST -H 'Content-type: application/json' \
           --data '{"text":"The CI build for the main branch was successful!"}' \
-          $WEBHOOK_URL
+          "$WEBHOOK_URL"
